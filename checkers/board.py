@@ -148,3 +148,48 @@ class Board:
       right += 1
     
     return moves
+  
+  # functions to get features
+  def get_piece_margin(self, turn): 
+    if turn == WHITE:
+      return self.white_left - self.red_left
+    else: 
+      return self.red_left - self.white_left
+    
+  def get_king_margin(self, turn):
+    if turn == WHITE:
+      return self.white_kings - self.red_kings
+    else: 
+      return self.red_kings - self.white_kings
+  
+  def filter_jumps(pair):
+    key, value = pair
+    if len(value) > 0:
+      return True
+    else: 
+      return False
+    
+  def filter_double_jumps(pair):
+    key, value = pair
+    if len(value) > 1:
+      return True
+    else: 
+      return False
+
+  def get_jumps(self, turn):
+    all_moves = {}
+    for piece in self.board:
+      if(piece != 0 and piece.color == turn):
+        all_moves = all_moves + self.board.get_valid_moves(piece)
+    
+    filtered_moves = dict(filter(filter_jumps, all_moves.items()))
+    single_jumps = len(filtered_moves)
+
+    filtered_double_jumps = dict(filter(filter_double_jumps, all_moves.items()))
+    double_jumps = len(filtered_double_jumps)
+
+    return single_jumps, double_jumps
+    
+
+
+  
