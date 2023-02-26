@@ -1,9 +1,10 @@
 import pygame
-from .constants import RED, WHITE, GREY, SQUARE_SIZE, CROWN
+from .constants import RED, WHITE, GREY, SQUARE_SIZE, CROWN, FONT
 
 class Piece:
   PADDING = 15
   OUTLINE = 2
+  ID = 1
 
   def __init__(self, row, col, color):
     self.row = row
@@ -13,6 +14,8 @@ class Piece:
     self.x = 0
     self.y = 0
     self.calc_pos()
+    self.id = self.ID
+    Piece.ID += 1
 
   def calc_pos(self):
     self.x = SQUARE_SIZE * self.col + SQUARE_SIZE // 2
@@ -27,6 +30,12 @@ class Piece:
     pygame.draw.circle(win, self.color, (self.x, self.y), radius)
     if self.king:
       win.blit(CROWN, (self.x - CROWN.get_width()//2, self.y - CROWN.get_height()//2))
+
+    text = FONT.render(str(self.id), True, RED, GREY)
+    textRect = text.get_rect()
+    textRect.center = (self.x, self.y)
+    win.blit(text, textRect)
+
 
   def move(self, row, col):
     self.row = row

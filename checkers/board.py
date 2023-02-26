@@ -182,10 +182,10 @@ class Board:
       if(piece != 0 and piece.color == turn):
         all_moves = all_moves + self.board.get_valid_moves(piece)
     
-    filtered_moves = dict(filter(filter_jumps, all_moves.items()))
+    filtered_moves = dict(filter(self.filter_jumps, all_moves.items()))
     single_jumps = len(filtered_moves)
 
-    filtered_double_jumps = dict(filter(filter_double_jumps, all_moves.items()))
+    filtered_double_jumps = dict(filter(self.filter_double_jumps, all_moves.items()))
     double_jumps = len(filtered_double_jumps)
 
     return single_jumps, double_jumps
