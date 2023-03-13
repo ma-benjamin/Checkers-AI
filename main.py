@@ -18,6 +18,15 @@ def main():
   clock = pygame.time.Clock()
   game = Game(WIN)
 
+  # Input is formatted as "row_piece col_piece row_next col_next", for example: 5 2 4 1 
+  with open('input') as file:
+    for line in file:
+      piece_pos = line.split(" ")[0:2]
+      next_square = line.split(" ")[2: 4]
+      game.select(int(piece_pos[0]), int(piece_pos[1]))
+      game.select(int(next_square[0]), int(next_square[1]))
+      game.update()
+
   while run:
     clock.tick(FPS)
     

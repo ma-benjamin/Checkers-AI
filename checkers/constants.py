@@ -12,3 +12,6 @@ BLUE = (0, 0, 255)
 GREY = (128, 128, 128)
 
 CROWN = pygame.transform.scale(pygame.image.load('assets/crown.png'), ( 44, 25))
+
+pygame.init()
+FONT = pygame.font.Font('freesansbold.ttf', 32)
