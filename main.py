@@ -8,7 +8,7 @@ WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Checkers')
 
 def get_row_col_from_mouse(pos):
-  x,y = pos
+  x, y = pos
   row = y // SQUARE_SIZE
   col = x // SQUARE_SIZE
   return row, col
@@ -18,7 +18,7 @@ def main():
   clock = pygame.time.Clock()
   game = Game(WIN)
 
-  # Input is formatted as "row_piece col_piece row_next col_next", for example: 5 2 4 1 
+    # Input is formatted as "row_piece col_piece row_next col_next", for example: 5 2 4 1
   with open('input') as file:
     for line in file:
       piece_pos = line.split(" ")[0:2]
@@ -27,11 +27,18 @@ def main():
       game.select(int(next_square[0]), int(next_square[1]))
       game.update()
 
+  game.display_score()
+
   while run:
     clock.tick(FPS)
-    
+
     if game.winner() != None:
       print(game.winner())
+      run = False
+
+    if game.isDraw():
+      print(game.isDraw())
+      run = False
 
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -42,8 +49,8 @@ def main():
         row, col = get_row_col_from_mouse(pos)
         game.select(row, col)
 
-
     game.update()
+
   pygame.quit()
-  
+
 main()
