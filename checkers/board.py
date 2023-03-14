@@ -114,9 +114,9 @@ class Board:
                     else:
                         row = min(r+3, ROWS)
                     moves.update(self._traverse_left(
-                        r+step, row, step, color, left-1, skipped=last))
+                        r+step, row, step, color, left-1, skipped=last+skipped))
                     moves.update(self._traverse_right(
-                        r+step, row, step, color, left+1, skipped=last))
+                        r+step, row, step, color, left+1, skipped=last+skipped))
                 break
             elif current.color == color:
                 break
