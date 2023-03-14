@@ -7,19 +7,38 @@ class Game:
     self._init()
     self.win = win
   
+  def _init(self):
+    self.selected = None
+    self.board = Board()
+    self.turnCount = 1
+    self.turn = RED
+    self.valid_moves = {}
+
   def update(self):
     self.board.draw(self.win)
     self.draw_valid_moves(self.valid_moves)
     pygame.display.update()
 
-  def _init(self):
-    self.selected = None
-    self.board = Board()
-    self.turn = RED
-    self.valid_moves = {}
+  def display_score(self):
+    player = "RED" if self.turn == RED else "WHITE"
+    print('-----------------------')
+    print("TURN " + str(self.turnCount) + ": " + player)
+    print('-----------------------')
+    print('DIFF IN PIECES: ' + str(self.board.get_piece_margin(self.turn)))
+    print('DIFF IN KINGS: ' + str(self.board.get_king_margin(self.turn)))
+    single_jumps, double_jumps, triple_jumps = self.board.get_jumps(self.turn)
+    print('SINGLE JUMPS AVAILABLE: ' + str(single_jumps))
+    print('DOUBLE JUMPS AVAILABLE: ' + str(double_jumps))
+    print('TRIPLE JUMPS AVAILABLE: ' + str(triple_jumps))
+    print('PIECES IN ENEMY HALF: ' + str(self.board.get_enemy_half_pieces(self.turn)))
 
   def winner(self):
     return self.board.winner()
+
+  def isDraw(self):
+    if self.turnCount > 65:
+      return self.board.isDraw()
+    return False
 
   def reset(self):
     self._init()
@@ -63,3 +82,5 @@ class Game:
       self.turn = WHITE
     else:
       self.turn = RED
+      self.turnCount += 1
+    self.display_score()

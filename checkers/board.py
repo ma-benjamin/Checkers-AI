@@ -1,5 +1,5 @@
 import pygame
-from .constants import BLACK, ROWS, RED, SQUARE_SIZE, COLS, WHITE, BLUE
+from .constants import BLACK, ROWS, RED, SQUARE_SIZE, COLS, WHITE, GREY
 from .piece import Piece
 
 
@@ -69,6 +69,9 @@ class Board:
             return RED
 
         return None
+
+    def isDraw(self):
+        return "Game is a draw - 65 moves have passed!"
 
     def get_valid_moves(self, piece):
         moves = {}
@@ -172,31 +175,55 @@ class Board:
         else:
             return self.red_kings - self.white_kings
 
-    def filter_jumps(pair):
+    def filter_jumps(self, pair):
         key, value = pair
-        if len(value) > 0:
+        if len(value) == 1:
             return True
         else:
             return False
 
-    def filter_double_jumps(pair):
+    def filter_double_jumps(self, pair):
         key, value = pair
-        if len(value) > 1:
+        if len(value) == 2:
+            return True
+        else:
+            return False
+        
+    def filter_triple_jumps(self, pair):
+        key, value = pair
+        if len(value) == 3:
             return True
         else:
             return False
 
     def get_jumps(self, turn):
         all_moves = {}
-        for piece in self.board:
-            if (piece != 0 and piece.color == turn):
-                all_moves = all_moves + self.board.get_valid_moves(piece)
+        for row in range(ROWS):
+            for col in range(COLS):
+                piece = self.board[row][col]
+                if (piece != 0 and piece.color == turn):
+                    all_moves.update(self.get_valid_moves(piece))
+        print(all_moves)
 
-        filtered_moves = dict(filter(filtered_moves, all_moves.items()))
+        filtered_moves = dict(filter(self.filter_jumps, all_moves.items()))
+        print(filtered_moves)
         single_jumps = len(filtered_moves)
 
         filtered_double_jumps = dict(
-            filter(filtered_double_jumps, all_moves.items()))
+            filter(self.filter_double_jumps, all_moves.items()))
         double_jumps = len(filtered_double_jumps)
 
-        return single_jumps, double_jumps
+        filtered_triple_jumps = dict(
+            filter(self.filter_triple_jumps, all_moves.items()))
+        triple_jumps = len(filtered_triple_jumps)
+
+        return single_jumps, double_jumps, triple_jumps
+    
+    def get_enemy_half_pieces(self, turn):
+        count = 0
+        if turn == WHITE:
+            # incomplete
+            return count
+        else:
+            # incomplete
+            return count
