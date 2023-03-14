@@ -203,10 +203,9 @@ class Board:
                 piece = self.board[row][col]
                 if (piece != 0 and piece.color == turn):
                     all_moves.update(self.get_valid_moves(piece))
-        print(all_moves)
+        print("All moves: " + str(all_moves))
 
         filtered_moves = dict(filter(self.filter_jumps, all_moves.items()))
-        print(filtered_moves)
         single_jumps = len(filtered_moves)
 
         filtered_double_jumps = dict(
@@ -217,13 +216,25 @@ class Board:
             filter(self.filter_triple_jumps, all_moves.items()))
         triple_jumps = len(filtered_triple_jumps)
 
+        print(" -> single moves: " + str(filtered_moves))
+        print(" -> double moves: " + str(filtered_double_jumps))
+        print(" -> triple moves: " + str(filtered_triple_jumps))
+
         return single_jumps, double_jumps, triple_jumps
     
     def get_enemy_half_pieces(self, turn):
         count = 0
-        if turn == WHITE:
-            # incomplete
+        if turn == RED:
+            for row in range(0, 4):
+                for col in range(COLS):
+                    piece = self.board[row][col]
+                    if (piece != 0 and piece.color == turn):
+                        count += 1
             return count
         else:
-            # incomplete
+            for row in range(4, 8):
+                for col in range(COLS):
+                    piece = self.board[row][col]
+                    if (piece != 0 and piece.color == turn):
+                        count += 1
             return count
