@@ -70,9 +70,6 @@ class Board:
 
         return None
 
-    def isDraw(self):
-        return "Game is a draw - 65 moves have passed!"
-
     def get_valid_moves(self, piece):
         moves = {}
         left = piece.col - 1
