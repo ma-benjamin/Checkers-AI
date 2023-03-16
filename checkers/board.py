@@ -70,9 +70,6 @@ class Board:
 
         return None
 
-    def isDraw(self):
-        return "Game is a draw - 65 moves have passed!"
-
     def get_valid_moves(self, piece):
         moves = {}
         left = piece.col - 1
@@ -149,9 +146,9 @@ class Board:
                     else:
                         row = min(r+3, ROWS)
                     moves.update(self._traverse_left(
-                        r+step, row, step, color, right-1, skipped=last))
+                        r+step, row, step, color, right-1, skipped=last+skipped))
                     moves.update(self._traverse_right(
-                        r+step, row, step, color, right+1, skipped=last))
+                        r+step, row, step, color, right+1, skipped=last+skipped))
                 break
             elif current.color == color:
                 break
