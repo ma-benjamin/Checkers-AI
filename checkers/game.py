@@ -31,11 +31,20 @@ class Game:
     print('DOUBLE JUMPS AVAILABLE: ' + str(double_jumps))
     print('TRIPLE JUMPS AVAILABLE: ' + str(triple_jumps))
     print('PIECES IN ENEMY HALF: ' + str(self.board.get_enemy_half_pieces(self.turn)))
+    print('Score: ' + str(self.get_score()))
 
   def get_score(self):
     single_jumps, double_jumps, triple_jumps = self.board.get_jumps(self.turn)
     return (2 * self.board.get_piece_margin(self.turn) + 5 * self.board.get_king_margin(self.turn) + 2 * (single_jumps > 0) +
             4 * (double_jumps > 0) + 6 * (triple_jumps > 0) + 2 * self.board.get_enemy_half_pieces(self.turn) + 100 * (self.winner() == self.turn) + 25 * (self.isDraw()))
+
+  def get_state(self):
+    single_jumps, double_jumps, triple_jumps = self.board.get_jumps(self.turn)
+    pm = self.board.get_piece_margin(self.turn)
+    km = self.board.get_king_margin(self.turn)
+    win = self.winner()
+    draw = self.isDraw()
+    return [single_jumps, double_jumps, triple_jumps, pm, km, win, draw]
 
   def winner(self):
     return self.board.winner()
@@ -90,3 +99,6 @@ class Game:
       self.turn = RED
       self.turnCount += 1
     self.display_score()
+
+  def get_possible_moves(self):
+    return self.board.get_valid_moves()

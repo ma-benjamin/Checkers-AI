@@ -200,7 +200,7 @@ class Board:
                 piece = self.board[row][col]
                 if (piece != 0 and piece.color == turn):
                     all_moves.update(self.get_valid_moves(piece))
-        print("All moves: " + str(all_moves))
+        # print("All moves: " + str(all_moves))
 
         filtered_moves = dict(filter(self.filter_jumps, all_moves.items()))
         single_jumps = len(filtered_moves)
@@ -213,9 +213,9 @@ class Board:
             filter(self.filter_triple_jumps, all_moves.items()))
         triple_jumps = len(filtered_triple_jumps)
 
-        print(" -> single moves: " + str(filtered_moves))
-        print(" -> double moves: " + str(filtered_double_jumps))
-        print(" -> triple moves: " + str(filtered_triple_jumps))
+        # print(" -> single moves: " + str(filtered_moves))
+        # print(" -> double moves: " + str(filtered_double_jumps))
+        # print(" -> triple moves: " + str(filtered_triple_jumps))
 
         return single_jumps, double_jumps, triple_jumps
     
