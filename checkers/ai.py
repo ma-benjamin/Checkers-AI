@@ -1,4 +1,5 @@
 from game import Game
+import copy
 import random
 
 LEARNING_RATE = 0.5
@@ -86,10 +87,10 @@ class AI:
       return None
     return answer
   
-  def get_potential_positions(possible_next_moves):
+  def get_potential_positions(self, possible_next_moves):
     potential_positions = []
     for move in possible_next_moves:
-      game = Game()
+      game = copy.deepcopy(self.game)
       game.board.move(move)
       potential_positions.append(game)
     return potential_positions
