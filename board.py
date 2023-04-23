@@ -1,5 +1,6 @@
 from constants import NUM_ROWS, NUM_COLS
 from piece import Piece
+import random as rd
 
 class Board:
     def __init__(self):
@@ -112,6 +113,30 @@ class Board:
 
         return 2 if team == 1 else 1
 
+    def generate_next(self):
+        all_moves = get_all_moves():
+        idx = rd.randint(0, len(all_moves) - 1)
+        from_row, from_col = all_moves[idx][0]
+        to_row, to_col = all_moves[idx][2]
+        self.board[to_row][to_col] = self.board[from_row][from_col]
+
+        # not sure if this needs to be implemented?
+        # check if became king
+        # if (to_row == 0 or to_row == 7) and self.board[to_row][to_col].is_king == False:
+        #     self.board[to_row][to_col].is_king = True
+        #     if self.turn == 1:
+        #         self.Board.team_1_kings += 1
+        #     else:
+        #         self.Board.team_2_kings += 1
+
+        # clear original position
+        self.board[from_row][from_col] = None
+
+        # remove skipped pieces
+        if self.possible_moves[(to_row, to_col)]:
+            self.Board.remove_positions(self.possible_moves[(to_row, to_col)], self.turn)
+    
+    
 ########################
 # Feature calculations #
 ########################
@@ -154,3 +179,4 @@ class Board:
                         count += 1
 
         return count
+    
