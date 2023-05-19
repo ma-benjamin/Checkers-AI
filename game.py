@@ -39,6 +39,7 @@ class Game:
         if self.Board.board[row][col] and self.Board.board[row][col].team == self.turn:
             self.selected_piece = (row, col)
             self.possible_moves = self.Board.get_possible_moves(row, col, self.turn, self.Board.board[row][col].is_king)
+            print(self.possible_moves)
             return
 
         ## otherwise, empty square/enemy piece was selected
@@ -111,6 +112,19 @@ class Game:
                         return False
         
         return True
+    
+    def get_all_moves(self):
+        all_moves = []
+
+        for row in range(NUM_ROWS):
+            for col in range(NUM_COLS):
+                if self.Board.board[row][col] and self.Board.board[row][col].team == self.turn:
+                    moves = self.Board.get_possible_moves(row, col, self.turn, self.Board.board[row][col].is_king)
+                    if moves:
+                        for move_to, skipped in moves.items():
+                            all_moves.append([(row, col), move_to, skipped])
+
+        return all_moves
 
     # def print_data(self):
     #     print('SELECTED PIECE: ' + str(self.selected_piece))
@@ -127,6 +141,7 @@ class Game:
         print('DOUBLE JUMPS AVAILABLE: ' + str(double_jumps))
         print('TRIPLE JUMPS AVAILABLE: ' + str(triple_jumps))
         print('PIECES IN ENEMY HALF: ' + str(self.Board.get_pieces_in_enemy_half(self.turn)))
+        print(self.get_all_moves())
 
     def get_score(self):
         single_jumps, double_jumps, triple_jumps = self.Board.get_jump_lengths(self.turn)
