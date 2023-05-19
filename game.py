@@ -36,9 +36,9 @@ class Game:
             return
         
         ## check if team piece was selected
-        if self.Board.board[row][col] and self.Board.board[row][col].team == self.turn:
+        if self.Board.board[row][col] and self.Board.board[row][col] * self.turn > 0:
             self.selected_piece = (row, col)
-            self.possible_moves = self.Board.get_possible_moves(row, col, self.turn, self.Board.board[row][col].is_king)
+            self.possible_moves = self.Board.get_possible_moves(row, col, self.turn, abs(self.Board.board[row][col]) == 2)
             return
 
         ## otherwise, empty square/enemy piece was selected
@@ -50,8 +50,11 @@ class Game:
         self.Board.board[to_row][to_col] = self.Board.board[self.selected_piece[0]][self.selected_piece[1]]
 
         # check if became king
-        if (to_row == 0 or to_row == 7) and self.Board.board[to_row][to_col].is_king == False:
-            self.Board.board[to_row][to_col].is_king = True
+        if (to_row == 0 or to_row == 7) and abs(self.Board.board[to_row][to_col]) == 1:
+            if self.Board.board[to_row][to_col] == 1:
+                self.Board.board[to_row][to_col] == 2
+            else:
+                self.Board.board[to_row][to_col] == -2
             if self.turn == 1:
                 self.Board.team_1_kings += 1
             else:
@@ -68,11 +71,7 @@ class Game:
         self.Graphics.draw_all(self.Board, self.possible_moves)
 
     def change_turn(self):
-        if self.turn == 1:
-            self.turn = 2
-        else:
-            self.turn = 1
-            self.total_turns += 1
+        self.turn *= -1
         
         self.selected_piece = None
         self.possible_moves = {}
@@ -106,8 +105,8 @@ class Game:
         ## if no more moves (ACTUALLY A WIN CONDITION, TO BE CHANGED)
         for row in range(NUM_ROWS):
             for col in range(NUM_COLS):
-                if self.Board.board[row][col] and self.Board.board[row][col].team == self.turn:
-                    if self.Board.get_possible_moves(row, col, self.turn, self.Board.board[row][col].is_king):
+                if self.Board.board[row][col] and self.Board.board[row][col] == self.turn:
+                    if self.Board.get_possible_moves(row, col, self.turn, abs(self.Board.board[row][col]) == 2):
                         return False
         
         return True
