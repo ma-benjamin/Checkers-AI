@@ -111,6 +111,15 @@ class Board:
 
         return WHITE if team == RED else RED
 
+    def compress_board(self):
+        rtn = []
+        for row in range(NUM_ROWS):
+            for col in range(NUM_COLS):
+                if (row + col) % 2 == 1:
+                    rtn.append(self.board[row][col])
+        rtn.reverse()
+        return rtn
+
     # def generate_next(self):
     #     all_moves = get_all_moves():
     #     idx = rd.randint(0, len(all_moves) - 1)
