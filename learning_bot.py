@@ -2,9 +2,17 @@ import pygame
 from graphics import Graphics
 from board import Board
 from constants import SQUARE_SIZE, NUM_ROWS, NUM_COLS, RED, WHITE
+import numpy as np
 
-class Game:
+class CheckersGameAI:
     def __init__(self):
+        self.reset()
+        
+
+    def initial_setup(self):
+        self.Graphics.setup(self.Board, self.possible_moves)
+
+    def reset(self):
         self.Graphics: Graphics = Graphics()
         self.Board: Board = Board()
         self.turn: int = RED           # only 1 or -1
@@ -12,11 +20,11 @@ class Game:
         self.is_finished: bool = False
         self.selected_piece: set = None   # (row, col)
         self.possible_moves: dict = {}    # dictionary of moves
-
-    def initial_setup(self):
+        self.frame_iteration = 0
+        
         self.Graphics.setup(self.Board, self.possible_moves)
 
-    def players_move(self):
+    def bot_move(self, action):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.exit_game()
@@ -25,15 +33,17 @@ class Game:
                 x, y = pygame.mouse.get_pos()
                 row, col = y // SQUARE_SIZE, x // SQUARE_SIZE
                 self.select_square(row, col)
-
+                self.update()
                 # self.print_data() # TO BE DELETED
 
-    def select_square(self, row, col):
+    def select_square(self, row, col): # change row, col to action which will hold the step
+        self.frame_iteration += 1
+        reward = 0
         ## check if is in allowed moves -> move the piece
         if (row, col) in self.possible_moves:
-            self.move_piece(row, col)
+            reward = self._move_piece(row, col)
             self.change_turn()
-            return
+            return reward
         
         ## check if team piece was selected
         if self.Board.board[row][col] and self.Board.board[row][col] * self.turn > 0:
@@ -45,7 +55,7 @@ class Game:
         self.selected_piece = None
         self.possible_moves = {}
 
-    def move_piece(self, to_row, to_col):
+    def _move_piece(self, to_row, to_col):
         # set the new position
         self.Board.board[to_row][to_col] = self.Board.board[self.selected_piece[0]][self.selected_piece[1]]
 
@@ -64,10 +74,12 @@ class Game:
         self.Board.board[self.selected_piece[0]][self.selected_piece[1]] = 0
 
         # remove skipped pieces
+        # reward of 5 for each piece removed
         if self.possible_moves[(to_row, to_col)]:
             self.Board.remove_positions(self.possible_moves[(to_row, to_col)], self.turn)
+        return self.possible_moves[(to_row, to_col)].length * 5
     
-    def update(self):
+    def _update(self):
         self.Graphics.draw_all(self.Board, self.possible_moves)
 
     def change_turn(self):
@@ -88,6 +100,7 @@ class Game:
                 print("Team RED won!")
             else:
                 print("Team WHITE won!")
+            print("check_winner")
             self.exit_game()
             return True
         return False
@@ -99,21 +112,17 @@ class Game:
 
     def is_draw(self):
         ## if turn count passed 65
-        if self.total_turns >= 130:
+        if self.total_turns >= 65:
             return True
         
         ## if no more moves (ACTUALLY A WIN CONDITION, TO BE CHANGED)
         for row in range(NUM_ROWS):
             for col in range(NUM_COLS):
-                if self.Board.board[row][col] and self.Board.board[row][col] * self.turn > 0:
+                if self.Board.board[row][col] and self.Board.board[row][col] == self.turn:
                     if self.Board.get_possible_moves(row, col, self.turn, abs(self.Board.board[row][col]) == 2):
                         return False
         
         return True
-
-    # def print_data(self):
-    #     print('SELECTED PIECE: ' + str(self.selected_piece))
-    #     print('POSSIBLE MOVES: ' + str(self.possible_moves))
 
     def display_score(self):
         color = {1: "RED", -1: "WHITE"}

@@ -1,4 +1,4 @@
-from constants import NUM_ROWS, NUM_COLS
+from constants import NUM_ROWS, NUM_COLS, RED, WHITE
 import random as rd
 
 class Board:
@@ -13,11 +13,11 @@ class Board:
             new_row = []
             for col in range(NUM_COLS):
                 if ((row + col) % 2 == 0 or row == 3 or row == 4):
-                    new_row.append(None)
+                    new_row.append(0)
                 elif (row < 3):
-                    new_row.append(-1)
+                    new_row.append(WHITE)
                 else:
-                    new_row.append(1)
+                    new_row.append(RED)
             new_board.append(new_row)
         return new_board
     
@@ -35,48 +35,47 @@ class Board:
         steps = {}
 
         # check for steps going up one row
-        if row != 0 and (team == 1 or is_king):
-            if col - 1 >= 0 and self.board[row - 1][col - 1] == None:
+        if row != 0 and (team == RED or is_king):
+            if col - 1 >= 0 and self.board[row - 1][col - 1] == 0:
                 steps.update({(row - 1, col - 1): []})
-            if col + 1 < 8 and self.board[row - 1][col + 1] == None:
+            if col + 1 < 8 and self.board[row - 1][col + 1] == 0:
                 steps.update({(row - 1, col + 1): []})
 
         # check for steps going down one row
-        if row != 7 and (team == 2 or is_king):
-            if col - 1 >= 0 and self.board[row + 1][col - 1] == None:
+        if row != 7 and (team == WHITE or is_king):
+            if col - 1 >= 0 and self.board[row + 1][col - 1] == 0:
                 steps.update({(row + 1, col - 1): []})
-            if col + 1 < 8 and self.board[row + 1][col + 1] == None:
+            if col + 1 < 8 and self.board[row + 1][col + 1] == 0:
                 steps.update({(row + 1, col + 1): []})
 
         return steps
     
     def get_jumps(self, row: int, col: int, jumped: list, team: int, is_king: bool) -> dict:
         jumps_dict = {}
-
         # force terminate if men jumped three times (and no restriction on king)
         if jumped and len(jumped) == 3 and not is_king:
             return jumps_dict
 
-        if row - 2 >= 0 and (team == 1 or is_king):
+        if row - 2 >= 0 and (team == RED or is_king):
             # top left
-            if col - 2 >= 0 and self.board[row - 1][col - 1] and self.board[row - 1][col - 1] * team < 0 and not self.board[row - 2][col - 2] and [row - 1, col - 1] not in jumped:
+            if col - 2 >= 0 and self.board[row - 1][col - 1] and self.board[row - 1][col - 1] * team < 0 and self.board[row - 2][col - 2] == 0 and [row - 1, col - 1] not in jumped:
                 new_jumped = jumped + [[row - 1, col - 1]]
                 jumps_dict.update({(row - 2, col - 2): new_jumped})
                 jumps_dict.update(self.get_jumps(row - 2, col - 2, new_jumped, team, is_king))
             # top right
-            if col + 2 <= 7 and self.board[row - 1][col + 1] and self.board[row - 1][col - 1] * team < 0 and not self.board[row - 2][col + 2] and [row - 1, col + 1] not in jumped:
+            if col + 2 <= 7 and self.board[row - 1][col + 1] and self.board[row - 1][col + 1] * team < 0 and self.board[row - 2][col + 2] == 0 and [row - 1, col + 1] not in jumped:
                 new_jumped = jumped + [[row - 1, col + 1]]
                 jumps_dict.update({(row - 2, col + 2): new_jumped})
                 jumps_dict.update(self.get_jumps(row - 2, col + 2, new_jumped, team, is_king))
 
-        if row + 2 <= 7 and (team == 2 or is_king):
+        if row + 2 <= 7 and (team == WHITE or is_king):
             # bottom left
-            if col - 2 >= 0 and self.board[row + 1][col - 1] and self.board[row - 1][col - 1] * team < 0 and not self.board[row + 2][col - 2] and [row + 1, col - 1] not in jumped:
+            if col - 2 >= 0 and self.board[row + 1][col - 1] and self.board[row + 1][col - 1] * team < 0 and self.board[row + 2][col - 2] == 0 and [row + 1, col - 1] not in jumped:
                 new_jumped = jumped + [[row + 1, col - 1]]
                 jumps_dict.update({(row + 2, col - 2): new_jumped})
                 jumps_dict.update(self.get_jumps(row + 2, col - 2, new_jumped, team, is_king))
             # bottom right
-            if col + 2 <= 7 and self.board[row + 1][col + 1] and self.board[row - 1][col - 1] * team < 0 and not self.board[row + 2][col + 2] and [row + 1, col + 1] not in jumped:
+            if col + 2 <= 7 and self.board[row + 1][col + 1] and self.board[row + 1][col + 1] * team < 0 and self.board[row + 2][col + 2] == 0 and [row + 1, col + 1] not in jumped:
                 new_jumped = jumped + [[row + 1, col + 1]]
                 jumps_dict.update({(row + 2, col + 2): new_jumped})
                 jumps_dict.update(self.get_jumps(row + 2, col + 2, new_jumped, team, is_king))
@@ -85,7 +84,7 @@ class Board:
     
     def remove_positions(self, removals, turn):
         for [row, col] in removals:
-            if turn == 1:
+            if turn == RED:
                 self.team_2_pieces -= 1
                 if abs(self.board[row][col]) == 2:
                     self.team_2_kings -= 1
@@ -93,15 +92,15 @@ class Board:
                 self.team_1_pieces -= 1
                 if abs(self.board[row][col]) == 2:
                     self.team_1_kings -= 1
-                    
-            self.board[row][col] = None
+              
+            self.board[row][col] = 0
 
     def winner(self, team):
         ## if out of pieces
         if self.team_1_pieces <= 0:
-            return 2
+            return WHITE
         if self.team_2_pieces <= 0:
-            return 1
+            return RED
         
         ## if no more moves
         for row in range(NUM_ROWS):
@@ -110,7 +109,7 @@ class Board:
                     if self.get_possible_moves(row, col, team, abs(self.board[row][col]) == 2):
                         return 0
 
-        return 2 if team == 1 else 1
+        return WHITE if team == RED else RED
 
     # def generate_next(self):
     #     all_moves = get_all_moves():
@@ -129,7 +128,7 @@ class Board:
     #     #         self.Board.team_2_kings += 1
 
     #     # clear original position
-    #     self.board[from_row][from_col] = None
+    #     self.board[from_row][from_col] = 0
 
     #     # remove skipped pieces
     #     if self.possible_moves[(to_row, to_col)]:
